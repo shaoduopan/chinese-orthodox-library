@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Chinese Orthodox Digital Library | 中文東正教數字文獻館</title>
+<!-- Version 0.7: manifest-based OCR reader -->
 <style>
 :root {
   --ink:#283b39; --muted:#687775; --green:#345e54;
@@ -241,8 +242,8 @@ footer {
         </button>
         <p id="mappingStatus" aria-live="polite"></p>
         <small>
-          此關聯暫時只儲存在本瀏覽器。
-          Mappings are stored locally in this browser.
+          已發布的關聯由 GitHub 共享；新建關聯先儲存於本瀏覽器。
+          Published mappings are shared; new links are saved locally until published.
         </small>
       </div>
     </div>
@@ -251,6 +252,7 @@ footer {
       <h3 id="psalmTitle">聖詠正文</h3>
       <p class="english" id="psalmEnglish">Psalm Text</p>
       <div id="psalmText">正在讀取文本……</div>
+      <div id="psalmSources" class="notice" style="display:none;"></div>
     </div>
   </div>
 
@@ -325,13 +327,16 @@ import * as pdfjsLib from
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs";
 
-const DATA_PATH = "data/psalter-1879-ocr.json";
+const MANIFEST_PATH = "data/psalter-1879-manifest.json";
+const EDITORIAL_PATH = "data/psalter-1879-editorial.json";
+// Old single-file path is retained only as an emergency fallback.
+const LEGACY_DATA_PATH = "data/psalter-1879-ocr.json";
 const PDF_PREFIX = "scans/11a_BG1879_Beiguan_Psalter_Scan-";
 const ISSUES_URL =
   "https://github.com/shaoduopan/chinese-orthodox-library/issues/new";
 const STORAGE_KEY = "codl-psalter-1879-page-map-v1";
 
-const batches = [
+let batches = [
   {start:1,end:20},
   {start:21,end:40},
   {start:41,end:60},
@@ -419,6 +424,9 @@ async function loadSharedMappings() {
 
 
 let psalms = [];
+let editorial = {supplements:[],incompletePsalms:[]};
+let dataWarnings = [];
+let manifestLoaded = false;
 let current = null;
 let batchIndex = 0;
 let localPage = 6;
@@ -433,16 +441,13 @@ const psalmSelect = $("psalmSelect");
 
 function batchPath(index) {
   const b = batches[index];
-  return PDF_PREFIX + b.start + "-" + b.end + ".pdf";
+  return b.pdf || PDF_PREFIX + b.start + "-" + b.end + ".pdf";
 }
 function absolutePage() {
   return batches[batchIndex].start + localPage - 1;
 }
 function getNumber(p) {
   return Number(p.psalmNumber ?? p.number ?? p.id);
-}
-function getText(p) {
-  return String(p.chineseText ?? p.text ?? "");
 }
 function getTitle(p) {
   return String(p.chineseTitle || "第"+getNumber(p)+"聖詠");
@@ -579,48 +584,200 @@ function mappingMessage(number) {
     : "尚無已確認頁碼 · No confirmed page mapping";
 }
 
+// Load the manifest first. Keep static PDF paths as a fallback if it is unavailable.
+async function loadManifest() {
+  const response = await fetch(MANIFEST_PATH,{cache:"no-store"});
+  if (!response.ok) throw new Error("Manifest HTTP " + response.status);
+  const manifest = await response.json();
+  if (!Array.isArray(manifest.batches) || manifest.batches.length !== 7) {
+    throw new Error("Manifest must have seven batches");
+  }
+  const validated = manifest.batches.map((b,i) => {
+    const start = Number(b.startPage);
+    const end = Number(b.endPage);
+    if (!Number.isInteger(start) || !Number.isInteger(end) ||
+        start < 1 || end < start || typeof b.ocr !== "string" ||
+        typeof b.pdf !== "string") {
+      throw new Error("Invalid manifest batch " + (i+1));
+    }
+    return {start,end,pdf:b.pdf,ocr:b.ocr,id:b.id || (start+"-"+end)};
+  });
+  validated.sort((a,b)=>a.start-b.start);
+  if (validated[0].start !== 1 || validated.at(-1).end !== 132 ||
+      validated.some((b,i)=>i>0 && b.start !== validated[i-1].end+1)) {
+    throw new Error("Manifest scan ranges must cover pages 1–132");
+  }
+  batches = validated;
+  manifestLoaded = true;
+}
+
+async function loadEditorial() {
+  try {
+    const response = await fetch(EDITORIAL_PATH,{cache:"no-store"});
+    if (!response.ok) throw new Error("HTTP " + response.status);
+    const data = await response.json();
+    if (!data || !Array.isArray(data.supplements)) {
+      throw new Error("Invalid editorial supplements");
+    }
+    editorial = {
+      supplements:data.supplements,
+      incompletePsalms:Array.isArray(data.incompletePsalms)
+        ? data.incompletePsalms.map(Number) : []
+    };
+  } catch(error) {
+    dataWarnings.push("Editorial notes unavailable: " + error.message);
+    console.warn("Editorial notes unavailable",error);
+  }
+}
+
+function buildReadingText(p) {
+  const parts = p.segments.map(x => x.text).filter(Boolean);
+  let text = parts.join("\n\n");
+  const supplements = editorial.supplements.filter(x =>
+    Number(x.psalmNumber) === p.psalmNumber &&
+    x.position === "end" && typeof x.text === "string" && x.text.trim()
+  );
+  for (const entry of supplements) {
+    // Avoid duplicating an editorial suffix if a later OCR version includes it.
+    if (!text.trimEnd().endsWith(entry.text)) {
+      text += entry.text;
+    }
+  }
+  return text;
+}
+
+function getText(p) {
+  return p && Array.isArray(p.segments)
+    ? buildReadingText(p)
+    : String(p?.chineseText ?? p?.text ?? "");
+}
+
+function describeSources(p) {
+  const lines = [];
+  if (p.segments.length) {
+    lines.push("OCR 來源 · OCR sources: " + p.segments.map(x =>
+      "PDF " + x.start + "–" + x.end).join("; "));
+  } else {
+    lines.push("原書有此篇，現有 OCR 無正文 · Original present; OCR missing.");
+  }
+  if (p.psalmNumber === 43) {
+    lines.push("第43篇於第41張掃描頁續篇；目前 OCR 不完整 · " +
+      "Psalm 43 continues on scan page 41; OCR is incomplete.");
+  }
+  if (p.psalmNumber === 44) {
+    lines.push("第44篇標題見第41張掃描頁左欄，正文自下一頁開始；待補錄 · " +
+      "Title on scan page 41; main text starts on the following page. Awaiting transcription.");
+  }
+  if (p.psalmNumber === 87) {
+    lines.push("第87篇末尾五字據第81張掃描頁人工補錄 · " +
+      "Final five characters supplied from scan page 81 after manual verification.");
+  }
+  if (p.segments.length > 1) {
+    lines.push("跨 OCR 批次；連接處尚待校核 · " +
+      "Text spans batches; transition awaits verification.");
+  }
+  if (editorial.incompletePsalms.includes(p.psalmNumber) &&
+      p.psalmNumber !== 43 && p.psalmNumber !== 44) {
+    lines.push("標記為未完成 · Marked incomplete in editorial notes.");
+  }
+  if (p.psalmNumber === 151) {
+    lines.push("《續聖詠》附錄 · Appendix Psalm 151.");
+  }
+  return lines;
+}
+
 async function showPsalm(number) {
-  current = psalms.find(p => getNumber(p) === Number(number));
+  current = psalms.find(p => p.psalmNumber === Number(number));
   if (!current) return;
-  const n = getNumber(current);
-
+  const n = current.psalmNumber;
   psalmSelect.value = String(n);
-  $("psalmTitle").textContent = getTitle(current);
-  $("psalmEnglish").textContent = "Psalm "+n;
-  $("psalmText").textContent = getText(current);
-  $("readerStatus").textContent = "未經人工校訂 · Unverified OCR";
-
+  $("psalmTitle").textContent = current.chineseTitle;
+  $("psalmEnglish").textContent = n===151 ? "Appendix · Psalm 151" : "Psalm " + n;
+  $("psalmText").textContent = getText(current) ||
+    "此篇 OCR 正文尚未收錄 · OCR text not yet available.";
+  $("copyBtn").disabled = !getText(current);
+  $("downloadBtn").disabled = !getText(current);
+  const notes = describeSources(current);
+  $("psalmSources").style.display = "block";
+  $("psalmSources").replaceChildren();
+  for (const note of notes) {
+    const line = document.createElement("div");
+    line.textContent = note;
+    $("psalmSources").appendChild(line);
+  }
+  $("readerStatus").textContent =
+    (n === 43 || n === 44 || n === 87 || current.segments.length > 1)
+      ? "需核對或含人工補錄 · Review required / Editorial supplement"
+      : "未經人工校訂 · Unverified OCR";
   mappingMessage(n);
-
   const mappedPage = pageMappings[n];
   if (mappedPage) await goAbsolutePage(mappedPage);
 }
 
 async function loadLibrary() {
   try {
-    const response = await fetch(DATA_PATH);
-    if (!response.ok) throw new Error("HTTP "+response.status);
-    const data = await response.json();
-    const raw = Array.isArray(data) ? data : data.psalms;
-    if (!Array.isArray(raw)) throw new Error("No psalms array");
-
-    psalms = raw.filter(p =>
-      Number.isFinite(getNumber(p)) && getText(p).length
-    ).sort((a,b) => getNumber(a)-getNumber(b));
-
-    if (!psalms.length) throw new Error("No readable texts");
-
+    const results = await Promise.allSettled(batches.map(async b => {
+      if (!b.ocr) throw new Error("No OCR path for pages "+b.start+"–"+b.end);
+      const response = await fetch(b.ocr,{cache:"no-store"});
+      if (!response.ok) throw new Error(b.ocr+" HTTP "+response.status);
+      const data = await response.json();
+      if (!data || !Array.isArray(data.psalms)) {
+        throw new Error(b.ocr+" has no psalms array");
+      }
+      return {batch:b,records:data.psalms};
+    }));
+    const grouped = new Map();
+    let batchesRead = 0;
+    results.forEach((r,i) => {
+      if (r.status !== "fulfilled") {
+        dataWarnings.push("OCR batch " + batches[i].start + "–" +
+          batches[i].end + " failed: " + r.reason.message);
+        return;
+      }
+      batchesRead++;
+      const {batch,records} = r.value;
+      records.forEach(record => {
+        const n = Number(record.psalmNumber);
+        if (!Number.isInteger(n) || n<1 || n>151) return;
+        const text = String(record.chineseText ?? "");
+        if (!grouped.has(n)) {
+          grouped.set(n,{
+            psalmNumber:n,
+            chineseTitle:record.chineseTitle || "第"+n+"聖詠",
+            segments:[]
+          });
+        }
+        const p = grouped.get(n);
+        if (text) p.segments.push({text,start:batch.start,end:batch.end});
+      });
+    });
+    if (!batchesRead) throw new Error("No OCR batches could be loaded");
+    // Preserve all canonical reading slots, including the omitted Psalm 44.
+    psalms = Array.from({length:151},(_,i) => {
+      const n = i+1;
+      return grouped.get(n) || {
+        psalmNumber:n,
+        chineseTitle:n===151 ? "續聖詠 附" : "第四十四聖詠",
+        segments:[]
+      };
+    });
+    psalmSelect.replaceChildren();
     psalms.forEach(p => {
       const option = document.createElement("option");
-      option.value = getNumber(p);
-      option.textContent =
-        getTitle(p)+" · Psalm "+getNumber(p);
+      option.value = String(p.psalmNumber);
+      option.textContent = p.chineseTitle + " · " +
+        (p.psalmNumber===151 ? "Appendix Psalm 151" : "Psalm "+p.psalmNumber) +
+        (!p.segments.length ? " [OCR missing]" : "");
       psalmSelect.appendChild(option);
     });
-    await showPsalm(getNumber(psalms[0]));
+    await showPsalm(1);
+    $("readerStatus").textContent += " · 已載入 " + batchesRead +
+      "/" + batches.length + " 個 OCR 批次" +
+      (dataWarnings.length ? " · " + dataWarnings.length + " warning(s)" : "");
+    if (dataWarnings.length) console.warn("OCR / editorial warnings:",dataWarnings);
   } catch(error) {
     $("psalmText").textContent =
-      "無法讀取 OCR · Unable to load text: "+error.message;
+      "無法讀取 OCR · Unable to load text: " + error.message;
   }
 }
 
@@ -652,14 +809,6 @@ function searchText() {
     });
     $("results").appendChild(button);
   });
-}
-
-for (const [i,b] of batches.entries()) {
-  const option = document.createElement("option");
-  option.value = String(i);
-  option.textContent = "PDF "+(i+1)+
-    " · Pages "+b.start+"–"+b.end;
-  scanSelect.appendChild(option);
 }
 
 psalmSelect.addEventListener("change",() =>
@@ -712,7 +861,7 @@ $("searchInput").addEventListener("keydown",e => {
 });
 
 $("copyBtn").addEventListener("click",async() => {
-  if (!current) return;
+  if (!current || !getText(current)) return;
   try {
     await navigator.clipboard.writeText(
       getTitle(current)+"\n\n"+getText(current)
@@ -724,7 +873,7 @@ $("copyBtn").addEventListener("click",async() => {
 });
 
 $("downloadBtn").addEventListener("click",() => {
-  if (!current) return;
+  if (!current || !getText(current)) return;
   const text = getTitle(current)+"\n\n"+getText(current);
   const blob = new Blob([text],{type:"text/plain;charset=utf-8"});
   const url = URL.createObjectURL(blob);
@@ -762,10 +911,22 @@ $("submitCorrection").addEventListener("click",() => {
 
 // Initialize shared mappings before the readers.
 async function initializeLibrary() {
-  await loadSharedMappings();
-
-  // Load the PDF viewer first, then the OCR reader.
-  // The Psalm selection can now use the shared map.
+  try {
+    await loadManifest();
+  } catch(error) {
+    $("psalmText").textContent = "無法讀取清單 · Manifest failed: " + error.message;
+    console.error("Manifest unavailable",error);
+    return;
+  }
+  // Refresh scan-volume options from the manifest.
+  scanSelect.replaceChildren();
+  for (const [i,b] of batches.entries()) {
+    const option = document.createElement("option");
+    option.value = String(i);
+    option.textContent = "PDF "+(i+1)+" · Pages "+b.start+"–"+b.end;
+    scanSelect.appendChild(option);
+  }
+  await Promise.all([loadSharedMappings(),loadEditorial()]);
   await loadBatch(0,6);
   await loadLibrary();
 }

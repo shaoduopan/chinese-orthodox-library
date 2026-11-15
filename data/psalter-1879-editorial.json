@@ -1,0 +1,15 @@
+
+{
+  "documentId": "psalter-1879",
+  "supplements": [
+    {
+      "psalmNumber": 87,
+      "position": "end",
+      "text": "所識者弗見",
+      "sourceScanPage": 81,
+      "status": "human-verified",
+      "note": "OCR omission at the batch boundary"
+    }
+  ],
+  "incompletePsalms": [43, 44]
+}

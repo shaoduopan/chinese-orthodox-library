@@ -342,22 +342,81 @@ const batches = [
 ];
 
 // Only mappings established for this prototype.
-const initialMappings = {1:6};
+const MAP_PATH = "data/psalter-1879-page-map.json";
 
-let pageMappings = {...initialMappings};
-try {
-  const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-  if (stored && typeof stored === "object") {
-    for (const [psalm,page] of Object.entries(stored)) {
-      if (Number.isInteger(Number(page)) &&
-          Number(page) >= 1 && Number(page) <= 132) {
-        pageMappings[psalm] = Number(page);
+let pageMappings = {1:6};
+
+async function loadSharedMappings() {
+
+  // 1. Load published mappings from GitHub Pages.
+  try {
+    const response = await fetch(MAP_PATH, {
+      cache:"no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error("HTTP " + response.status);
+    }
+
+    const shared = await response.json();
+
+    if (!shared ||
+        typeof shared !== "object" ||
+        Array.isArray(shared)) {
+      throw new Error("Invalid page-map format");
+    }
+
+    for (const [psalm,page] of Object.entries(shared)) {
+      const n = Number(psalm);
+      const p = Number(page);
+
+      if (Number.isInteger(n) &&
+          n >= 1 && n <= 151 &&
+          Number.isInteger(p) &&
+          p >= 1 && p <= 132) {
+        pageMappings[n] = p;
       }
     }
+
+    console.log("Shared Psalm mappings loaded");
+
+  } catch(error) {
+    console.warn(
+      "Could not load shared mappings:",
+      error
+    );
   }
-} catch(e) {
-  console.warn("Cannot read saved mappings",e);
+
+  // 2. Apply locally saved mappings.
+  // Local mappings take precedence in this browser.
+  try {
+    const stored = JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "{}"
+    );
+
+    if (stored && typeof stored === "object" &&
+        !Array.isArray(stored)) {
+      for (const [psalm,page] of Object.entries(stored)) {
+        const n = Number(psalm);
+        const p = Number(page);
+
+        if (Number.isInteger(n) &&
+            n >= 1 && n <= 151 &&
+            Number.isInteger(p) &&
+            p >= 1 && p <= 132) {
+          pageMappings[n] = p;
+        }
+      }
+    }
+
+  } catch(error) {
+    console.warn(
+      "Could not read local mappings:",
+      error
+    );
+  }
 }
+
 
 let psalms = [];
 let current = null;
@@ -700,9 +759,19 @@ $("submitCorrection").addEventListener("click",() => {
   window.open(url.toString(),"_blank","noopener");
 });
 
-// Initialize the readers.
-loadBatch(0,6);
-loadLibrary();
+
+// Initialize shared mappings before the readers.
+async function initializeLibrary() {
+  await loadSharedMappings();
+
+  // Load the PDF viewer first, then the OCR reader.
+  // The Psalm selection can now use the shared map.
+  await loadBatch(0,6);
+  await loadLibrary();
+}
+
+initializeLibrary();
+
 </script>
 </body>
 </html>

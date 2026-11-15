@@ -1,0 +1,336 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chinese Orthodox Digital Library</title>
+<style>
+:root {
+  --ink:#283b39;
+  --muted:#687775;
+  --green:#345e54;
+  --paper:#faf9f5;
+  --soft:#f0f2ed;
+  --line:#dce2dc;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:Georgia,"Noto Serif CJK TC",
+    "Microsoft JhengHei",serif;
+  line-height:1.75;
+}
+header {
+  background:#203d36;
+  color:white;
+  padding:24px max(5%,20px);
+}
+.brand { font-size:1.35rem; font-weight:bold; }
+.subtitle { font-size:.85rem; opacity:.8; }
+nav { display:flex; gap:20px; flex-wrap:wrap; margin-top:15px; }
+nav a { color:white; text-decoration:none; font-size:.92rem; }
+main { max-width:1140px; margin:auto; padding:30px 20px; }
+h1,h2,h3 { line-height:1.4; }
+h1 { font-size:2rem; }
+h2 { margin-top:32px; }
+section { margin-bottom:40px; }
+.muted,small { color:var(--muted); }
+.cards { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+.card,.panel {
+  background:white;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:20px;
+}
+.card h3 { margin:0; }
+.eyebrow { font-size:.83rem; color:var(--muted); }
+button,select,input {
+  font:inherit;
+  padding:9px 12px;
+  border:1px solid #b7c7c1;
+  border-radius:6px;
+}
+button { background:var(--green); color:white; cursor:pointer; }
+button:hover { background:#24483f; }
+input { max-width:100%; }
+.toolbar { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
+.reader { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.reader .panel { min-height:320px; }
+#psalmText {
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  font-size:1.12rem;
+  line-height:2.1;
+}
+.status {
+  background:var(--soft);
+  color:var(--green);
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:.8rem;
+}
+.notice {
+  border-left:3px solid var(--green);
+  padding:10px 14px;
+  background:var(--soft);
+  margin:16px 0;
+}
+#results button {
+  background:white;
+  color:var(--green);
+  margin:4px;
+}
+a { color:var(--green); }
+footer {
+  border-top:1px solid var(--line);
+  text-align:center;
+  padding:25px;
+  color:var(--muted);
+  font-size:.85rem;
+}
+@media(max-width:700px) {
+  .cards,.reader { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">Chinese Orthodox Digital Library</div>
+  <div class="subtitle">中文東正教數字文獻館</div>
+  <nav>
+    <a href="#home">首頁</a>
+    <a href="#catalog">文獻目錄</a>
+    <a href="#search">全文檢索</a>
+    <a href="#notes">研究札記</a>
+    <a href="#contribute">參與協作</a>
+  </nav>
+</header>
+
+<main>
+<section id="home">
+  <h1>中文東正教歷史文獻</h1>
+  <p class="muted">Historical Chinese Orthodox Texts</p>
+  <p>
+    收集、保存、轉錄與研究北京傳教團及其他歷史時期
+    的中文東正教文獻，為閱讀、研究與合作校訂
+    提供開放的數字平台。
+  </p>
+</section>
+
+<section id="catalog">
+  <h2>文獻目錄 · Collections</h2>
+  <div class="cards">
+    <div class="card">
+      <h3>聖經文獻</h3>
+      <p class="eyebrow">Scriptural Texts</p>
+      <p>《聖詠經》1879年版</p>
+      <a href="#reading">閱讀文獻</a>
+    </div>
+    <div class="card">
+      <h3>禮儀文獻</h3>
+      <p class="eyebrow">Liturgical Texts</p>
+      <small>建設中 · Coming soon</small>
+    </div>
+    <div class="card">
+      <h3>教理與神學</h3>
+      <p class="eyebrow">Theology</p>
+      <small>建設中 · Coming soon</small>
+    </div>
+    <div class="card">
+      <h3>歷史文獻</h3>
+      <p class="eyebrow">Historical Sources</p>
+      <small>建設中 · Coming soon</small>
+    </div>
+  </div>
+</section>
+
+<section id="reading">
+  <h2>《聖詠經》· 1879</h2>
+  <p>
+    <span class="status">未經人工校訂 · Unverified OCR</span>
+  </p>
+  <p class="muted">
+    北京傳教團歷史譯本。原書書目資料尚待核實。
+    本頁提供初步機器識別文本，不能視為正式校訂本。
+  </p>
+
+  <div class="toolbar">
+    <label for="psalmSelect">選擇聖詠：</label>
+    <select id="psalmSelect"></select>
+    <button id="copyBtn">複製文本</button>
+    <button id="downloadBtn">下載 TXT</button>
+  </div>
+
+  <div class="reader">
+    <div class="panel">
+      <h3>原始掃描 · Facsimile</h3>
+      <p class="muted">
+        原書掃描件尚未接入網站。
+        下一階段將在此顯示 PDF 或掃描圖像，
+        供讀者對照校訂。
+      </p>
+    </div>
+    <div class="panel">
+      <h3 id="psalmTitle">聖詠正文</h3>
+      <div id="psalmText">正在讀取文本……</div>
+    </div>
+  </div>
+  <p class="muted" id="readerStatus"></p>
+</section>
+
+<section id="search">
+  <h2>全文檢索 · Search</h2>
+  <div class="toolbar">
+    <input id="searchInput" placeholder="輸入中文詞語">
+    <button id="searchBtn">搜尋</button>
+  </div>
+  <div id="results" aria-live="polite"></div>
+</section>
+
+<section id="notes">
+  <h2>研究札記 · Research Notes</h2>
+  <p>本欄目將收錄文獻研究、翻譯術語及版本比較札記。</p>
+</section>
+
+<section id="contribute">
+  <h2>參與協作 · Contribute</h2>
+  <p>
+    歡迎讀者協助辨認歷史漢字、回報 OCR 錯誤，
+    並提出文獻研究建議。
+  </p>
+  <p>
+    <a id="issueLink"
+       href="https://github.com/randomnameingthb/chinese-orthodox-library/issues/new"
+       target="_blank" rel="noopener">
+       提交文字校訂建議 · Report an Error
+    </a>
+  </p>
+  <p class="muted">
+    初期修訂透過 GitHub 提交，後續將增設網站內校對功能。
+  </p>
+</section>
+</main>
+
+<footer>
+  Chinese Orthodox Digital Library<br>
+  中文東正教數字文獻館 · Work in Progress
+</footer>
+
+<script>
+let psalms = [];
+let current = null;
+
+const select = document.getElementById("psalmSelect");
+const title = document.getElementById("psalmTitle");
+const textBox = document.getElementById("psalmText");
+const statusBox = document.getElementById("readerStatus");
+
+function getNumber(p) {
+  return Number(p.psalmNumber ?? p.number ?? p.id);
+}
+function getText(p) {
+  return String(p.chineseText ?? p.text ?? "");
+}
+function getTitle(p) {
+  return String(p.chineseTitle || ("第" + getNumber(p) + "聖詠"));
+}
+function showPsalm(number) {
+  current = psalms.find(p => getNumber(p) === Number(number));
+  if (!current) return;
+  select.value = String(getNumber(current));
+  title.textContent = getTitle(current);
+  textBox.textContent = getText(current);
+  statusBox.textContent = "此文本尚未經人工校訂。";
+}
+function searchText() {
+  const term = document.getElementById("searchInput").value.trim();
+  const results = document.getElementById("results");
+  results.replaceChildren();
+  if (!term) {
+    results.textContent = "請輸入檢索詞。";
+    return;
+  }
+  const found = psalms.filter(p =>
+    (getTitle(p) + getText(p)).includes(term)
+  );
+  if (!found.length) {
+    results.textContent = "沒有找到符合的文本。";
+    return;
+  }
+  const info = document.createElement("p");
+  info.textContent = "找到 " + found.length + " 篇聖詠：";
+  results.appendChild(info);
+  found.forEach(p => {
+    const btn = document.createElement("button");
+    btn.textContent = getTitle(p);
+    btn.addEventListener("click", () => {
+      showPsalm(getNumber(p));
+      document.getElementById("reading").scrollIntoView();
+    });
+    results.appendChild(btn);
+  });
+}
+async function loadLibrary() {
+  try {
+    const response = await fetch("data/psalter-1879-ocr.json");
+    if (!response.ok) throw new Error("HTTP " + response.status);
+    const data = await response.json();
+    const raw = Array.isArray(data) ? data : data.psalms;
+    if (!Array.isArray(raw)) throw new Error("找不到 psalms 陣列");
+    psalms = raw.filter(p =>
+      Number.isFinite(getNumber(p)) && getText(p).length > 0
+    ).sort((a,b) => getNumber(a) - getNumber(b));
+    if (!psalms.length) throw new Error("沒有可閱讀的聖詠正文");
+    psalms.forEach(p => {
+      const option = document.createElement("option");
+      option.value = getNumber(p);
+      option.textContent = getTitle(p);
+      select.appendChild(option);
+    });
+    showPsalm(getNumber(psalms[0]));
+  } catch(error) {
+    textBox.textContent = "無法讀取 OCR 文本：" + error.message;
+    statusBox.textContent =
+      "請檢查 JSON 文件路徑、格式，以及 psalms 字段。";
+  }
+}
+select.addEventListener("change", () => showPsalm(select.value));
+document.getElementById("searchBtn")
+  .addEventListener("click", searchText);
+document.getElementById("searchInput")
+  .addEventListener("keydown", e => {
+    if(e.key === "Enter") searchText();
+  });
+document.getElementById("copyBtn")
+  .addEventListener("click", async () => {
+    if (!current) return;
+    try {
+      await navigator.clipboard.writeText(
+        getTitle(current) + "\n\n" + getText(current)
+      );
+      statusBox.textContent = "文本已複製。";
+    } catch {
+      statusBox.textContent = "複製失敗，請手動選取文本。";
+    }
+  });
+document.getElementById("downloadBtn")
+  .addEventListener("click", () => {
+    if (!current) return;
+    const content = getTitle(current) + "\n\n" + getText(current);
+    const blob = new Blob([content], {type:"text/plain;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "psalter-1879-psalm-" + getNumber(current) + ".txt";
+    link.click();
+    URL.revokeObjectURL(url);
+  });
+loadLibrary();
+</script>
+
+</body>
+</html>

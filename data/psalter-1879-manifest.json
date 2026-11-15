@@ -1,0 +1,61 @@
+
+{
+  "documentId": "psalter-1879",
+  "title": "聖詠經",
+  "englishTitle": "The Psalter",
+  "publicationYear": 1879,
+  "totalScanPages": 132,
+  "ocrStatus": "unverified",
+  "pageMap": "data/psalter-1879-page-map.json",
+  "batches": [
+    {
+      "id": "1-20",
+      "startPage": 1,
+      "endPage": 20,
+      "pdf": "scans/11a_BG1879_Beiguan_Psalter_Scan-1-20.pdf",
+      "ocr": "data/11a_BG1879_Beiguan_Psalter_Scan-1-20.json"
+    },
+    {
+      "id": "21-40",
+      "startPage": 21,
+      "endPage": 40,
+      "pdf": "scans/11a_BG1879_Beiguan_Psalter_Scan-21-40.pdf",
+      "ocr": "data/11a_BG1879_Beiguan_Psalter_Scan-21-40.json"
+    },
+    {
+      "id": "41-60",
+      "startPage": 41,
+      "endPage": 60,
+      "pdf": "scans/11a_BG1879_Beiguan_Psalter_Scan-41-60.pdf",
+      "ocr": "data/11a_BG1879_Beiguan_Psalter_Scan-41-60.json"
+    },
+    {
+      "id": "61-80",
+      "startPage": 61,
+      "endPage": 80,
+      "pdf": "scans/11a_BG1879_Beiguan_Psalter_Scan-61-80.pdf",
+      "ocr": "data/11a_BG1879_Beiguan_Psalter_Scan-61-80.json"
+    },
+    {
+      "id": "81-100",
+      "startPage": 81,
+      "endPage": 100,
+      "pdf": "scans/11a_BG1879_Beiguan_Psalter_Scan-81-100.pdf",
+      "ocr": "data/11a_BG1879_Beiguan_Psalter_Scan-81-100.json"
+    },
+    {
+      "id": "101-120",
+      "startPage": 101,
+      "endPage": 120,
+      "pdf": "scans/11a_BG1879_Beiguan_Psalter_Scan-101-120.pdf",
+      "ocr": "data/11a_BG1879_Beiguan_Psalter_Scan-101-120.json"
+    },
+    {
+      "id": "121-132",
+      "startPage": 121,
+      "endPage": 132,
+      "pdf": "scans/11a_BG1879_Beiguan_Psalter_Scan-121-132.pdf",
+      "ocr": "data/11a_BG1879_Beiguan_Psalter_Scan-121-132.json"
+    }
+  ]
+}

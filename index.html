@@ -334,21 +334,36 @@ footer {
 
   <div class="reader">
 
-    <div class="panel">
-      <h3>原始掃描</h3>
-      <p class="section-english">
-        Original Facsimile
-      </p>
+    <
+<div class="panel">
+  <h3>原始掃描</h3>
+  <p class="section-english">Original Facsimile</p>
 
-      <div class="notice">
-        原書掃描件尚未接入網站。<br>
-        <span class="english">
-          The original scanned edition will
-          be available here for comparison
-          and proofreading.
-        </span>
-      </div>
-    </div>
+  <p class="muted">
+    《聖詠經》1879年版 · 掃描頁1–20<br>
+    The Psalter, 1879 · Scanned pages 1–20
+  </p>
+
+  <iframe
+    src="scans/psalter-1879-first20.pdf#page=6"
+    title="1879 Psalter Original Facsimile"
+    style="width:100%;height:650px;border:1px solid #dce2dc;border-radius:6px;"
+    loading="lazy">
+  </iframe>
+
+  <p class="muted">
+    請使用 PDF 閱讀器翻頁，與右側 OCR 文本對照。
+    頁碼尚未與聖詠篇號自動同步。
+  </p>
+
+  <p>
+    <a href="scans/psalter-1879-first20.pdf"
+       target="_blank" rel="noopener">
+      開啟原始掃描 · Open Facsimile
+    </a>
+  </p>
+</div>
+
 
     <div class="panel">
       <h3 id="psalmTitle">
@@ -366,6 +381,36 @@ footer {
 
   <p class="muted" id="readerStatus"
      aria-live="polite"></p>
+  
+<div class="panel" style="margin-top:20px;">
+  <h3>文字校訂 · Proofreading</h3>
+
+  <p class="muted">
+    如果發現 OCR 錯誤，請對照原書提出修訂建議。
+    Corrections will be reviewed before publication.
+  </p>
+
+  <label for="correctionText">
+    校訂建議 · Suggested Correction
+  </label>
+
+  <textarea id="correctionText"
+    rows="5"
+    style="width:100%;padding:12px;border:1px solid #b7c7c1;border-radius:6px;font:inherit;"
+    placeholder="請列出原 OCR 文字、建議修改的文字及理由。"></textarea>
+
+  <p style="margin-top:12px;">
+    <button id="submitCorrection" type="button">
+      提交校訂建議 · Submit Correction
+    </button>
+  </p>
+
+  <p class="english">
+    A GitHub account is required to submit a correction.
+    No changes will be made automatically.
+  </p>
+</div>
+
 
 </section>
 
@@ -683,6 +728,45 @@ document.getElementById("downloadBtn")
     link.remove();
 
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+
+  
+document.getElementById("submitCorrection")
+  .addEventListener("click", () => {
+    if (!current) {
+      alert("Please select a Psalm first.");
+      return;
+    }
+
+    const suggestion = document
+      .getElementById("correctionText").value.trim();
+
+    if (!suggestion) {
+      alert("請先填寫校訂建議。 Please enter a correction.");
+      return;
+    }
+
+    const number = getNumber(current);
+
+    const issueTitle =
+      "1879 Psalter: Correction to Psalm " + number;
+
+    const issueBody =
+      "Edition: 1879 Psalter\n" +
+      "Psalm: " + number + "\n" +
+      "Status: Unverified OCR\n\n" +
+      "Suggested correction:\n" +
+      suggestion + "\n\n" +
+      "Please verify against the scanned edition.";
+
+    const url = new URL(
+      "https://github.com/shaoduopan/chinese-orthodox-library/issues/new"
+    );
+
+    url.searchParams.set("title", issueTitle);
+    url.searchParams.set("body", issueBody);
+
+    window.open(url.toString(), "_blank", "noopener");
   });
 
 loadLibrary();

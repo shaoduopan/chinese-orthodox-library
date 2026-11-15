@@ -3,203 +3,121 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Chinese Orthodox Digital Library | 中文東正教數字文獻館</title>
-
 <style>
 :root {
-  --ink:#283b39;
-  --muted:#687775;
-  --green:#345e54;
-  --dark:#203d36;
-  --paper:#faf9f5;
-  --soft:#f0f2ed;
-  --line:#dce2dc;
+  --ink:#283b39; --muted:#687775; --green:#345e54;
+  --dark:#203d36; --paper:#faf9f5;
+  --soft:#f0f2ed; --line:#dce2dc;
 }
 * { box-sizing:border-box; }
 html { scroll-behavior:smooth; }
 body {
-  margin:0;
-  background:var(--paper);
-  color:var(--ink);
+  margin:0; background:var(--paper); color:var(--ink);
   font-family:Georgia,"Noto Serif CJK TC",
     "Microsoft JhengHei",serif;
   line-height:1.75;
 }
 header {
-  background:var(--dark);
-  color:white;
+  background:var(--dark); color:white;
   padding:24px max(5%,20px);
 }
-.brand {
-  font-size:1.5rem;
-  font-weight:bold;
-}
-.subtitle {
-  font-size:.95rem;
-  opacity:.85;
-}
+.brand { font-size:1.5rem; font-weight:bold; }
+.subtitle { opacity:.85; font-size:.95rem; }
 nav {
-  display:flex;
-  flex-wrap:wrap;
-  gap:22px;
-  margin-top:18px;
+  display:flex; flex-wrap:wrap; gap:20px; margin-top:18px;
 }
-nav a {
-  color:white;
-  text-decoration:none;
-  font-size:.9rem;
-}
+nav a { color:white; text-decoration:none; font-size:.9rem; }
 nav a:hover { text-decoration:underline; }
-main {
-  max-width:1200px;
-  margin:auto;
-  padding:30px 20px;
-}
+main { max-width:1200px; margin:auto; padding:30px 20px; }
 h1,h2,h3 { line-height:1.4; }
 h1 { font-size:2rem; }
-h2 { margin-top:32px; margin-bottom:8px; }
+h2 { margin:32px 0 8px; }
 h3 { margin-top:0; }
 section { margin-bottom:48px; }
-.muted,small { color:var(--muted); }
-.english {
-  color:var(--muted);
-  font-size:.9em;
-}
+.muted,small,.english { color:var(--muted); }
+.english { font-size:.9em; }
 .section-english {
-  color:var(--muted);
-  font-size:.95rem;
-  margin-top:0;
-  margin-bottom:18px;
+  color:var(--muted); font-size:.95rem;
+  margin-top:0; margin-bottom:18px;
 }
-.cards {
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:14px;
+.cards,.reader {
+  display:grid; grid-template-columns:1fr 1fr; gap:16px;
 }
+.reader { align-items:start; }
 .card,.panel {
-  background:white;
-  border:1px solid var(--line);
-  border-radius:10px;
-  padding:20px;
+  background:white; border:1px solid var(--line);
+  border-radius:10px; padding:20px; min-width:0;
 }
 .card h3 { margin-bottom:4px; }
-.eyebrow {
-  font-size:.9rem;
-  color:var(--muted);
-  margin-top:0;
-}
+.eyebrow { color:var(--muted); margin-top:0; }
 button,select,input,textarea {
-  font:inherit;
-  padding:9px 12px;
-  border:1px solid #b7c7c1;
-  border-radius:6px;
+  font:inherit; padding:9px 12px;
+  border:1px solid #b7c7c1; border-radius:6px;
 }
 button {
-  background:var(--green);
-  color:white;
-  cursor:pointer;
+  cursor:pointer; background:var(--green); color:white;
 }
 button:hover { background:#24483f; }
-button:disabled {
-  opacity:.5;
-  cursor:not-allowed;
-}
-button:focus-visible,
-select:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-a:focus-visible {
-  outline:3px solid #87b7a1;
-  outline-offset:2px;
+button:disabled { opacity:.45; cursor:not-allowed; }
+button:focus-visible,select:focus-visible,
+input:focus-visible,textarea:focus-visible,a:focus-visible {
+  outline:3px solid #87b7a1; outline-offset:2px;
 }
 textarea { width:100%; }
-.toolbar {
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  align-items:center;
-  margin-bottom:16px;
+.toolbar,.scan-controls {
+  display:flex; flex-wrap:wrap; gap:9px; align-items:center;
+  margin-bottom:14px;
 }
-.reader {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-  align-items:start;
-}
-.reader .panel { min-width:0; }
 #psalmText {
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  font-size:1.12rem;
-  line-height:2.1;
+  white-space:pre-wrap; overflow-wrap:anywhere;
+  font-size:1.12rem; line-height:2.1;
 }
 .status {
-  display:inline-block;
-  background:var(--soft);
-  color:var(--green);
-  padding:5px 11px;
-  border-radius:20px;
-  font-size:.8rem;
+  display:inline-block; background:var(--soft);
+  color:var(--green); padding:5px 11px;
+  border-radius:20px; font-size:.82rem;
 }
 .notice {
-  background:var(--soft);
-  border-left:3px solid var(--green);
-  padding:12px 15px;
-  margin:14px 0;
+  background:var(--soft); border-left:3px solid var(--green);
+  padding:12px 15px; margin:12px 0;
 }
-.scan-toolbar {
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  gap:8px;
-  margin:14px 0;
+#scanSelect { width:100%; margin-bottom:12px; }
+#pdfPage { width:75px; }
+#pdfStage {
+  min-height:340px; max-height:780px; overflow:auto;
+  background:#e8e8e5; border:1px solid var(--line);
+  border-radius:6px; text-align:center; padding:10px;
 }
-#scanSelect { width:100%; }
-#pdfPage { width:72px; }
-#pdfViewer {
-  width:100%;
-  height:650px;
-  border:1px solid var(--line);
-  border-radius:6px;
-  background:#eee;
-  display:block;
+#pdfCanvas {
+  max-width:none; display:block; margin:auto;
+  box-shadow:0 2px 12px #0002;
 }
-#pdfMessage {
-  font-size:.88rem;
-  margin-top:10px;
+#pdfStatus,#mappingStatus {
+  font-size:.85rem; color:var(--muted);
 }
 #results button {
-  background:white;
-  color:var(--green);
-  margin:4px;
+  background:white; color:var(--green); margin:4px;
 }
 a { color:var(--green); }
 footer {
-  border-top:1px solid var(--line);
-  text-align:center;
-  padding:25px;
-  color:var(--muted);
-  font-size:.85rem;
+  border-top:1px solid var(--line); padding:25px;
+  color:var(--muted); font-size:.85rem; text-align:center;
 }
 @media(max-width:750px) {
   .cards,.reader { grid-template-columns:1fr; }
   h1 { font-size:1.65rem; }
   nav { gap:12px; }
-  #pdfViewer { height:490px; }
+  #pdfStage { max-height:550px; }
 }
 </style>
 </head>
 
 <body>
-
 <header>
-  <div class="brand">
-    Chinese Orthodox Digital Library
-  </div>
-  <div class="subtitle">
-    中文東正教數字文獻館
-  </div>
+  <div class="brand">Chinese Orthodox Digital Library</div>
+  <div class="subtitle">中文東正教數字文獻館</div>
   <nav aria-label="Main navigation">
     <a href="#home">首頁 · Home</a>
     <a href="#catalog">文獻目錄 · Catalog</a>
@@ -210,22 +128,17 @@ footer {
 </header>
 
 <main>
-
 <section id="home">
   <h1>中文東正教歷史文獻</h1>
-  <p class="section-english">
-    Historical Chinese Orthodox Texts
-  </p>
+  <p class="section-english">Historical Chinese Orthodox Texts</p>
   <p>
-    收集、保存、轉錄與研究北京傳教團及其他歷史時期
-    的中文東正教文獻，為閱讀、研究與合作校訂
-    提供開放的數字平台。
+    收集、保存、轉錄與研究北京傳教團及其他歷史時期的
+    中文東正教文獻，為閱讀、研究與合作校訂提供開放的數字平台。
   </p>
   <p class="english">
-    A digital library dedicated to preserving,
-    transcribing, and studying historical Chinese
-    Orthodox Christian texts, particularly those
-    associated with the Beijing Orthodox Mission.
+    A digital library dedicated to preserving, transcribing,
+    and studying historical Chinese Orthodox Christian texts,
+    particularly those associated with the Beijing Orthodox Mission.
   </p>
 </section>
 
@@ -236,12 +149,8 @@ footer {
     <div class="card">
       <h3>聖經文獻</h3>
       <p class="eyebrow">Scriptural Texts</p>
-      <p>
-        《聖詠經》· 1879年版<br>
-        <span class="english">
-          The Psalter · 1879 Edition
-        </span>
-      </p>
+      <p>《聖詠經》· 1879年版</p>
+      <p class="english">The Psalter · 1879 Edition</p>
       <a href="#reading">閱讀文獻 · Read Text</a>
     </div>
     <div class="card">
@@ -251,9 +160,7 @@ footer {
     </div>
     <div class="card">
       <h3>教理與神學</h3>
-      <p class="eyebrow">
-        Catechetical and Theological Texts
-      </p>
+      <p class="eyebrow">Catechetical and Theological Texts</p>
       <small>建設中 · Coming Soon</small>
     </div>
     <div class="card">
@@ -266,144 +173,107 @@ footer {
 
 <section id="reading">
   <h2>《聖詠經》· 1879年版</h2>
-  <p class="section-english">
-    The Psalter · 1879 Edition
-  </p>
-  <span class="status">
-    未經人工校訂 · Unverified OCR
-  </span>
+  <p class="section-english">The Psalter · 1879 Edition</p>
+  <span class="status">未經人工校訂 · Unverified OCR</span>
   <p class="muted">
     北京傳教團歷史譯本。原書書目資料尚待核實。
-    本頁提供初步機器識別文本，不能視為正式校訂本。
+    本頁提供初步 OCR 文本，並非正式校訂本。
   </p>
   <p class="english">
     Historical Chinese Orthodox translation.
-    The OCR text has not yet been verified
-    against the original printed edition.
+    The OCR text has not yet been verified against the printed edition.
   </p>
 
   <div class="toolbar">
-    <label for="psalmSelect">
-      選擇聖詠 · Select Psalm:
-    </label>
+    <label for="psalmSelect">選擇聖詠 · Select Psalm:</label>
     <select id="psalmSelect"></select>
-    <button id="copyBtn" type="button">
-      複製文本 · Copy Text
-    </button>
-    <button id="downloadBtn" type="button">
-      下載 TXT · Download TXT
-    </button>
+    <button id="copyBtn">複製文本 · Copy Text</button>
+    <button id="downloadBtn">下載 TXT · Download TXT</button>
   </div>
 
   <div class="reader">
-
-    <!-- ORIGINAL SCANS -->
     <div class="panel">
       <h3>原始掃描</h3>
-      <p class="section-english">
-        Original Facsimile
-      </p>
+      <p class="section-english">Original Facsimile</p>
 
       <label for="scanSelect">
         選擇掃描分冊 · Select Scan Volume
       </label>
-      <select id="scanSelect">
-        <option value="0">PDF 1 · Pages 1–20</option>
-        <option value="1">PDF 2 · Pages 21–40</option>
-        <option value="2">PDF 3 · Pages 41–60</option>
-        <option value="3">PDF 4 · Pages 61–80</option>
-        <option value="4">PDF 5 · Pages 81–100</option>
-        <option value="5">PDF 6 · Pages 101–120</option>
-        <option value="6">PDF 7 · Pages 121–132</option>
-      </select>
+      <select id="scanSelect"></select>
 
-      <div class="scan-toolbar">
-        <button id="prevPage" type="button">
-          ◀ 上一頁
-        </button>
-        <label for="pdfPage">
-          PDF Page
-        </label>
-        <input id="pdfPage" type="number"
-               min="1" max="20" value="6">
-        <button id="goPage" type="button">
-          跳轉 · Go
-        </button>
-        <button id="nextPage" type="button">
-          下一頁 ▶
-        </button>
+      <div class="scan-controls">
+        <button id="prevPage">◀ 上一頁</button>
+        <label for="pdfPage">Page</label>
+        <input id="pdfPage" type="number" min="1" value="6">
+        <button id="goPage">跳轉 · Go</button>
+        <button id="nextPage">下一頁 ▶</button>
       </div>
 
-      <p class="muted" id="scanRange">
-        Scanned pages 1–20
-      </p>
+      <div class="scan-controls">
+        <label for="zoomSelect">縮放 · Zoom:</label>
+        <select id="zoomSelect">
+          <option value="0.75">75%</option>
+          <option value="1" selected>100%</option>
+          <option value="1.25">125%</option>
+          <option value="1.5">150%</option>
+          <option value="2">200%</option>
+        </select>
+      </div>
 
-      <iframe id="pdfViewer"
-        title="1879 Psalter Original Facsimile">
-      </iframe>
-
-      <p id="pdfMessage" class="muted"
-         aria-live="polite">
-        正在檢查掃描文件……
-        Checking PDF...
-      </p>
-
+      <p class="muted" id="scanRange"></p>
+      <div id="pdfStage">
+        <canvas id="pdfCanvas" aria-label="Scanned book page"></canvas>
+      </div>
+      <p id="pdfStatus" aria-live="polite">Loading PDF...</p>
       <p>
-        <a id="openPdf" href="#"
-           target="_blank" rel="noopener">
-          開啟原始掃描 · Open PDF
-        </a>
+        <a id="openPdf" target="_blank" rel="noopener"
+           href="#">開啟原始 PDF · Open Original PDF</a>
       </p>
 
-      <p class="english">
-        PDF page numbers indicate positions within
-        the selected scan file. The Psalm text and
-        scanned pages are not yet synchronized.
-      </p>
-    </div>
-
-    <!-- OCR TEXT -->
-    <div class="panel">
-      <h3 id="psalmTitle">
-        聖詠正文 · Psalm Text
-      </h3>
-      <p class="english" id="psalmEnglish"></p>
-      <div id="psalmText">
-        正在讀取文本…… Loading text...
+      <div class="notice">
+        <strong>聖詠與頁碼關聯 · Psalm–Page Mapping</strong>
+        <p class="english">
+          After locating the beginning of a Psalm in the scan,
+          link the current original PDF page to that Psalm.
+        </p>
+        <button id="linkPsalm">
+          將當前頁關聯至所選聖詠 · Link Current Page
+        </button>
+        <p id="mappingStatus" aria-live="polite"></p>
+        <small>
+          此關聯暫時只儲存在本瀏覽器。
+          Mappings are stored locally in this browser.
+        </small>
       </div>
     </div>
 
+    <div class="panel">
+      <h3 id="psalmTitle">聖詠正文</h3>
+      <p class="english" id="psalmEnglish">Psalm Text</p>
+      <div id="psalmText">正在讀取文本……</div>
+    </div>
   </div>
 
-  <p class="muted" id="readerStatus"
-     aria-live="polite"></p>
+  <p id="readerStatus" class="muted" aria-live="polite"></p>
 
-  <!-- PROOFREADING -->
   <div class="panel" style="margin-top:20px;">
     <h3>文字校訂 · Proofreading</h3>
     <p class="muted">
       如發現 OCR 錯誤，請對照原書提出修訂建議。
     </p>
-    <p class="english">
-      Corrections are reviewed by a human editor
-      before changes are made to the digital text.
-    </p>
-
     <label for="correctionText">
       校訂建議 · Suggested Correction
     </label>
     <textarea id="correctionText" rows="5"
       placeholder="原 OCR 文字、建議修改、理由及掃描頁碼"></textarea>
-
     <p>
-      <button id="submitCorrection" type="button">
+      <button id="submitCorrection">
         提交校訂建議 · Submit Correction
       </button>
     </p>
     <p class="english">
-      This opens a pre-filled GitHub Issue.
-      A GitHub account is required.
-      Corrections are not applied automatically.
+      This opens a GitHub Issue. A GitHub account is required.
+      The correction is reviewed before changing the text.
     </p>
   </div>
 </section>
@@ -411,19 +281,10 @@ footer {
 <section id="search">
   <h2>全文檢索</h2>
   <p class="section-english">Full-Text Search</p>
-  <p>
-    搜尋目前已收錄的聖詠文本。
-  </p>
-  <p class="english">
-    Search the currently available Psalm texts.
-  </p>
+  <p>搜尋目前已收錄的聖詠文本。</p>
   <div class="toolbar">
-    <input id="searchInput"
-      aria-label="Search text"
-      placeholder="輸入中文詞語 · Search term">
-    <button id="searchBtn" type="button">
-      搜尋 · Search
-    </button>
+    <input id="searchInput" placeholder="輸入中文詞語 · Search term">
+    <button id="searchBtn">搜尋 · Search</button>
   </div>
   <div id="results" aria-live="polite"></div>
 </section>
@@ -431,35 +292,24 @@ footer {
 <section id="notes">
   <h2>研究札記</h2>
   <p class="section-english">Research Notes</p>
-  <p>
-    本欄目將收錄文獻研究、翻譯術語及版本比較札記。
-  </p>
+  <p>本欄目將收錄文獻研究、翻譯術語及版本比較札記。</p>
   <p class="english">
-    Research notes on textual history,
-    translation terminology and historical editions.
+    Research notes on textual history, translation terminology,
+    and historical editions.
   </p>
 </section>
 
 <section id="contribute">
   <h2>參與協作</h2>
   <p class="section-english">Contribute</p>
+  <p>歡迎讀者辨認歷史漢字、回報 OCR 錯誤並提出建議。</p>
   <p>
-    歡迎讀者辨認歷史漢字、回報 OCR 錯誤，
-    並提出文獻研究建議。
-  </p>
-  <p class="english">
-    Readers and researchers are welcome to report
-    transcription errors and suggest corrections.
-  </p>
-  <p>
-    <a
-      href="https://github.com/shaoduopan/chinese-orthodox-library/issues/new"
+    <a href="https://github.com/shaoduopan/chinese-orthodox-library/issues/new"
       target="_blank" rel="noopener">
       提交校訂建議 · Report a Correction
     </a>
   </p>
 </section>
-
 </main>
 
 <footer>
@@ -468,381 +318,391 @@ footer {
   建設中 · Work in Progress
 </footer>
 
-<script>
+<script type="module">
+import * as pdfjsLib from
+  "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs";
+
 const DATA_PATH = "data/psalter-1879-ocr.json";
-const PDF_PREFIX =
-  "scans/11a_BG1879_Beiguan_Psalter_Scan-";
+const PDF_PREFIX = "scans/11a_BG1879_Beiguan_Psalter_Scan-";
 const ISSUES_URL =
   "https://github.com/shaoduopan/chinese-orthodox-library/issues/new";
+const STORAGE_KEY = "codl-psalter-1879-page-map-v1";
 
-// Each batch refers to the ORIGINAL PDF page positions.
 const batches = [
-  {start:1,   end:20},
-  {start:21,  end:40},
-  {start:41,  end:60},
-  {start:61,  end:80},
-  {start:81,  end:100},
-  {start:101, end:120},
-  {start:121, end:132}
+  {start:1,end:20},
+  {start:21,end:40},
+  {start:41,end:60},
+  {start:61,end:80},
+  {start:81,end:100},
+  {start:101,end:120},
+  {start:121,end:132}
 ];
+
+// Only mappings established for this prototype.
+const initialMappings = {1:6};
+
+let pageMappings = {...initialMappings};
+try {
+  const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+  if (stored && typeof stored === "object") {
+    for (const [psalm,page] of Object.entries(stored)) {
+      if (Number.isInteger(Number(page)) &&
+          Number(page) >= 1 && Number(page) <= 132) {
+        pageMappings[psalm] = Number(page);
+      }
+    }
+  }
+} catch(e) {
+  console.warn("Cannot read saved mappings",e);
+}
 
 let psalms = [];
 let current = null;
-let currentBatch = 0;
-let currentPage = 6;
-let pdfAvailable = false;
+let batchIndex = 0;
+let localPage = 6;
+let pdfDoc = null;
+let loadSerial = 0;
+let renderSerial = 0;
+let zoom = 1;
 
-const select = document.getElementById("psalmSelect");
-const title = document.getElementById("psalmTitle");
-const englishTitle = document.getElementById("psalmEnglish");
-const textBox = document.getElementById("psalmText");
-const statusBox = document.getElementById("readerStatus");
-const scanSelect = document.getElementById("scanSelect");
-const pdfViewer = document.getElementById("pdfViewer");
-const pdfPage = document.getElementById("pdfPage");
-const pdfMessage = document.getElementById("pdfMessage");
-const scanRange = document.getElementById("scanRange");
-const openPdf = document.getElementById("openPdf");
-const prevPage = document.getElementById("prevPage");
-const nextPage = document.getElementById("nextPage");
-const goPage = document.getElementById("goPage");
+const $ = id => document.getElementById(id);
+const scanSelect = $("scanSelect");
+const psalmSelect = $("psalmSelect");
 
 function batchPath(index) {
   const b = batches[index];
   return PDF_PREFIX + b.start + "-" + b.end + ".pdf";
 }
-
-function batchLength(index) {
-  const b = batches[index];
-  return b.end - b.start + 1;
+function absolutePage() {
+  return batches[batchIndex].start + localPage - 1;
 }
-
-function absolutePdfPage() {
-  return batches[currentBatch].start + currentPage - 1;
-}
-
 function getNumber(p) {
   return Number(p.psalmNumber ?? p.number ?? p.id);
 }
-
 function getText(p) {
   return String(p.chineseText ?? p.text ?? "");
 }
-
 function getTitle(p) {
-  return String(
-    p.chineseTitle ||
-    ("第" + getNumber(p) + "聖詠")
-  );
+  return String(p.chineseTitle || "第"+getNumber(p)+"聖詠");
 }
 
-function showPsalm(number) {
-  current = psalms.find(
-    p => getNumber(p) === Number(number)
-  );
+function updateNavigation() {
+  const length = pdfDoc ? pdfDoc.numPages :
+    batches[batchIndex].end - batches[batchIndex].start + 1;
+
+  $("pdfPage").max = String(length);
+  $("pdfPage").value = String(localPage);
+  $("prevPage").disabled = !pdfDoc || absolutePage() <= 1;
+  $("nextPage").disabled = !pdfDoc || absolutePage() >= 132;
+  $("goPage").disabled = !pdfDoc;
+  $("pdfPage").disabled = !pdfDoc;
+
+  const b = batches[batchIndex];
+  $("scanRange").textContent =
+    "原始 PDF 頁序 " + b.start + "–" + b.end +
+    " · Original PDF pages " + b.start + "–" + b.end;
+  $("openPdf").href = batchPath(batchIndex)+"#page="+localPage;
+}
+
+async function renderPage() {
+  if (!pdfDoc) return;
+
+  const serial = ++renderSerial;
+  const doc = pdfDoc;
+  const requestedPage = localPage;
+  const requestedBatch = batchIndex;
+
+  $("pdfStatus").textContent = "正在繪製掃描頁 · Rendering page...";
+
+  try {
+    const page = await doc.getPage(requestedPage);
+    if (serial !== renderSerial || doc !== pdfDoc) return;
+
+    const base = page.getViewport({scale:1});
+    const container = $("pdfStage");
+    const fitWidth = Math.max(100, container.clientWidth - 24);
+    const scale = (fitWidth / base.width) * zoom;
+    const viewport = page.getViewport({scale});
+
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+
+    canvas.width = Math.floor(viewport.width * ratio);
+    canvas.height = Math.floor(viewport.height * ratio);
+    canvas.style.width = viewport.width+"px";
+    canvas.style.height = viewport.height+"px";
+
+    await page.render({
+      canvasContext:context,
+      viewport,
+      transform:ratio === 1 ? null : [ratio,0,0,ratio,0,0]
+    }).promise;
+
+    if (serial !== renderSerial || doc !== pdfDoc) return;
+
+    const old = $("pdfCanvas");
+    canvas.id = "pdfCanvas";
+    canvas.setAttribute("aria-label","Scanned book page");
+    old.replaceWith(canvas);
+
+    $("pdfStatus").textContent =
+      "原始 PDF 第 " +
+      (batches[requestedBatch].start + requestedPage - 1) +
+      " 頁 · Original PDF page " +
+      (batches[requestedBatch].start + requestedPage - 1);
+  } catch(error) {
+    if (serial === renderSerial) {
+      $("pdfStatus").textContent =
+        "PDF 繪製失敗 · Rendering failed: "+error.message;
+    }
+  }
+}
+
+async function loadBatch(index,page=1) {
+  batchIndex = index;
+  localPage = page;
+  scanSelect.value = String(index);
+  pdfDoc = null;
+  const serial = ++loadSerial;
+  ++renderSerial;
+  updateNavigation();
+  $("pdfStatus").textContent = "正在載入 PDF · Loading PDF...";
+
+  const path = batchPath(index);
+  try {
+    const task = pdfjsLib.getDocument({url:path});
+    const doc = await task.promise;
+
+    if (serial !== loadSerial) {
+      await task.destroy();
+      return;
+    }
+    pdfDoc = doc;
+    localPage = Math.min(page,doc.numPages);
+    updateNavigation();
+    await renderPage();
+  } catch(error) {
+    if (serial !== loadSerial) return;
+    $("pdfStatus").textContent =
+      "無法載入此掃描分冊 · Unable to load PDF: " +
+      path + " ("+error.message+")";
+    updateNavigation();
+  }
+}
+
+async function goAbsolutePage(page) {
+  const n = Number(page);
+  if (!Number.isInteger(n) || n < 1 || n > 132) return false;
+
+  const target = batches.findIndex(b => n>=b.start && n<=b.end);
+  if (target < 0) return false;
+  const inside = n - batches[target].start + 1;
+
+  if (target !== batchIndex || !pdfDoc) {
+    await loadBatch(target,inside);
+  } else {
+    localPage = inside;
+    updateNavigation();
+    await renderPage();
+  }
+  return true;
+}
+
+function mappingMessage(number) {
+  const page = pageMappings[number];
+  $("mappingStatus").textContent = page
+    ? "已記錄：聖詠 "+number+" → PDF 第 "+page+
+      " 頁 · Saved mapping"
+    : "尚無已確認頁碼 · No confirmed page mapping";
+}
+
+async function showPsalm(number) {
+  current = psalms.find(p => getNumber(p) === Number(number));
   if (!current) return;
-  select.value = String(getNumber(current));
-  title.textContent = getTitle(current);
-  englishTitle.textContent =
-    "Psalm " + getNumber(current);
-  textBox.textContent = getText(current);
-  statusBox.textContent =
-    "未經人工校訂 · Unverified OCR";
+  const n = getNumber(current);
+
+  psalmSelect.value = String(n);
+  $("psalmTitle").textContent = getTitle(current);
+  $("psalmEnglish").textContent = "Psalm "+n;
+  $("psalmText").textContent = getText(current);
+  $("readerStatus").textContent = "未經人工校訂 · Unverified OCR";
+
+  mappingMessage(n);
+
+  const mappedPage = pageMappings[n];
+  if (mappedPage) await goAbsolutePage(mappedPage);
 }
 
 async function loadLibrary() {
   try {
     const response = await fetch(DATA_PATH);
-    if (!response.ok) {
-      throw new Error("HTTP " + response.status);
-    }
+    if (!response.ok) throw new Error("HTTP "+response.status);
     const data = await response.json();
     const raw = Array.isArray(data) ? data : data.psalms;
-
-    if (!Array.isArray(raw)) {
-      throw new Error("Cannot find psalms array");
-    }
+    if (!Array.isArray(raw)) throw new Error("No psalms array");
 
     psalms = raw.filter(p =>
-      Number.isFinite(getNumber(p)) &&
-      getText(p).length > 0
+      Number.isFinite(getNumber(p)) && getText(p).length
     ).sort((a,b) => getNumber(a)-getNumber(b));
 
-    if (!psalms.length) {
-      throw new Error("No readable Psalm texts");
-    }
+    if (!psalms.length) throw new Error("No readable texts");
 
     psalms.forEach(p => {
       const option = document.createElement("option");
-      option.value = String(getNumber(p));
+      option.value = getNumber(p);
       option.textContent =
-        getTitle(p) + " · Psalm " + getNumber(p);
-      select.appendChild(option);
+        getTitle(p)+" · Psalm "+getNumber(p);
+      psalmSelect.appendChild(option);
     });
-
-    showPsalm(getNumber(psalms[0]));
+    await showPsalm(getNumber(psalms[0]));
   } catch(error) {
-    textBox.textContent =
-      "無法讀取 OCR 文本 · Unable to load OCR text: " +
-      error.message;
+    $("psalmText").textContent =
+      "無法讀取 OCR · Unable to load text: "+error.message;
   }
 }
 
 function searchText() {
-  const term = document.getElementById("searchInput")
-    .value.trim();
-  const results = document.getElementById("results");
-  results.replaceChildren();
-
+  const term = $("searchInput").value.trim();
+  $("results").replaceChildren();
   if (!term) {
-    results.textContent =
-      "請輸入檢索詞 · Please enter a search term.";
+    $("results").textContent = "請輸入檢索詞 · Enter a search term.";
     return;
   }
-
   const found = psalms.filter(p =>
-    (getTitle(p) + getText(p)).includes(term)
+    (getTitle(p)+getText(p)).includes(term)
   );
-
   if (!found.length) {
-    results.textContent =
-      "沒有找到符合的文本 · No results found.";
+    $("results").textContent = "沒有找到符合的文本 · No results.";
     return;
   }
-
   const info = document.createElement("p");
-  info.textContent =
-    "找到 " + found.length +
-    " 篇聖詠 · " + found.length +
-    " matching Psalm(s)";
-  results.appendChild(info);
+  info.textContent = "找到 "+found.length+
+    " 篇聖詠 · "+found.length+" matching Psalm(s)";
+  $("results").appendChild(info);
 
   found.forEach(p => {
-    const btn = document.createElement("button");
-    btn.textContent =
-      getTitle(p) + " · Psalm " + getNumber(p);
-    btn.addEventListener("click", () => {
+    const button = document.createElement("button");
+    button.textContent = getTitle(p)+" · Psalm "+getNumber(p);
+    button.addEventListener("click",() => {
       showPsalm(getNumber(p));
-      document.getElementById("reading")
-        .scrollIntoView();
+      $("reading").scrollIntoView();
     });
-    results.appendChild(btn);
+    $("results").appendChild(button);
   });
 }
 
-// Update the iframe only after confirming the file exists.
-function displayPdf() {
-  const path = batchPath(currentBatch);
-  const url = path + "#page=" + currentPage;
-
-  pdfViewer.style.display = "block";
-  pdfViewer.src = url;
-  openPdf.href = url;
-
-  const absolute = absolutePdfPage();
-  pdfMessage.textContent =
-    "當前：PDF 總頁序 " + absolute +
-    "（本分冊第 " + currentPage + " 頁）" +
-    " · Original PDF page " + absolute;
+for (const [i,b] of batches.entries()) {
+  const option = document.createElement("option");
+  option.value = String(i);
+  option.textContent = "PDF "+(i+1)+
+    " · Pages "+b.start+"–"+b.end;
+  scanSelect.appendChild(option);
 }
 
-function updatePageControls() {
-  const count = batchLength(currentBatch);
-  pdfPage.min = "1";
-  pdfPage.max = String(count);
-  pdfPage.value = String(currentPage);
-  prevPage.disabled = !pdfAvailable || currentPage <= 1;
-  nextPage.disabled = !pdfAvailable || currentPage >= count;
-  goPage.disabled = !pdfAvailable;
-  pdfPage.disabled = !pdfAvailable;
-}
-
-async function changeBatch(index) {
-  currentBatch = index;
-  currentPage = index === 0 ? 6 : 1;
-  pdfAvailable = false;
-  updatePageControls();
-
-  const b = batches[index];
-  const path = batchPath(index);
-
-  scanRange.textContent =
-    "原始 PDF 頁序 " + b.start + "–" + b.end +
-    " · Original PDF pages " + b.start + "–" + b.end;
-
-  pdfViewer.removeAttribute("src");
-  pdfViewer.style.display = "none";
-  openPdf.href = path;
-  pdfMessage.textContent =
-    "正在檢查掃描文件…… Checking PDF...";
-
-  try {
-    const response = await fetch(path, {
-      method:"HEAD",
-      cache:"no-store"
-    });
-
-    // Avoid displaying a previous selection's result
-    // when the user changes batches quickly.
-    if (index !== currentBatch) return;
-
-    if (!response.ok) {
-      throw new Error("HTTP " + response.status);
-    }
-
-    pdfAvailable = true;
-    updatePageControls();
-    displayPdf();
-
-  } catch(error) {
-    if (index !== currentBatch) return;
-
-    pdfAvailable = false;
-    updatePageControls();
-
-    pdfMessage.textContent =
-      "此分冊尚未找到。請確認已上傳：" +
-      path + " · PDF unavailable: " + error.message;
-  }
-}
-
-function setPage(page) {
-  if (!pdfAvailable) return;
-
-  const n = Number(page);
-  const count = batchLength(currentBatch);
-
-  if (!Number.isInteger(n) || n < 1 || n > count) {
-    pdfMessage.textContent =
-      "請輸入 1–" + count +
-      " 的分冊頁碼 · Enter a valid page number.";
-    pdfPage.value = String(currentPage);
+psalmSelect.addEventListener("change",() =>
+  showPsalm(psalmSelect.value)
+);
+scanSelect.addEventListener("change",() =>
+  loadBatch(Number(scanSelect.value),1)
+);
+$("prevPage").addEventListener("click",() =>
+  goAbsolutePage(absolutePage()-1)
+);
+$("nextPage").addEventListener("click",() =>
+  goAbsolutePage(absolutePage()+1)
+);
+$("goPage").addEventListener("click",() => {
+  const n = Number($("pdfPage").value);
+  const limit = pdfDoc ? pdfDoc.numPages : 0;
+  if (!Number.isInteger(n) || n<1 || n>limit) {
+    alert("Invalid page number / 頁碼無效");
+    $("pdfPage").value = String(localPage);
     return;
   }
-
-  currentPage = n;
-  updatePageControls();
-  displayPdf();
-}
-
-select.addEventListener("change", () => {
-  showPsalm(select.value);
+  goAbsolutePage(batches[batchIndex].start+n-1);
+});
+$("pdfPage").addEventListener("keydown",e => {
+  if (e.key==="Enter") $("goPage").click();
+});
+$("zoomSelect").addEventListener("change",() => {
+  zoom = Number($("zoomSelect").value);
+  renderPage();
 });
 
-document.getElementById("searchBtn")
-  .addEventListener("click", searchText);
+$("linkPsalm").addEventListener("click",() => {
+  if (!current || !pdfDoc) return;
+  const n = getNumber(current);
+  const page = absolutePage();
+  pageMappings[n] = page;
+  try {
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(pageMappings));
+    mappingMessage(n);
+  } catch(error) {
+    $("mappingStatus").textContent =
+      "無法在此瀏覽器保存關聯 · Local save failed.";
+  }
+});
 
-document.getElementById("searchInput")
-  .addEventListener("keydown", e => {
-    if (e.key === "Enter") searchText();
-  });
+$("searchBtn").addEventListener("click",searchText);
+$("searchInput").addEventListener("keydown",e => {
+  if (e.key==="Enter") searchText();
+});
 
-document.getElementById("copyBtn")
-  .addEventListener("click", async () => {
-    if (!current) return;
-    try {
-      await navigator.clipboard.writeText(
-        getTitle(current) +
-        " · Psalm " + getNumber(current) +
-        "\n\n" + getText(current)
-      );
-      statusBox.textContent =
-        "文本已複製 · Text copied.";
-    } catch {
-      statusBox.textContent =
-        "複製失敗 · Copy failed.";
-    }
-  });
-
-document.getElementById("downloadBtn")
-  .addEventListener("click", () => {
-    if (!current) return;
-
-    const content =
-      getTitle(current) +
-      " · Psalm " + getNumber(current) +
-      "\n\n" + getText(current);
-
-    const blob = new Blob(
-      [content],
-      {type:"text/plain;charset=utf-8"}
+$("copyBtn").addEventListener("click",async() => {
+  if (!current) return;
+  try {
+    await navigator.clipboard.writeText(
+      getTitle(current)+"\n\n"+getText(current)
     );
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download =
-      "psalter-1879-psalm-" +
-      getNumber(current) + ".txt";
-
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  });
-
-scanSelect.addEventListener("change", () => {
-  changeBatch(Number(scanSelect.value));
+    $("readerStatus").textContent = "文本已複製 · Text copied";
+  } catch {
+    $("readerStatus").textContent = "複製失敗 · Copy failed";
+  }
 });
 
-prevPage.addEventListener("click", () => {
-  setPage(currentPage - 1);
+$("downloadBtn").addEventListener("click",() => {
+  if (!current) return;
+  const text = getTitle(current)+"\n\n"+getText(current);
+  const blob = new Blob([text],{type:"text/plain;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "psalter-1879-psalm-"+getNumber(current)+".txt";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url),1000);
 });
 
-nextPage.addEventListener("click", () => {
-  setPage(currentPage + 1);
+$("submitCorrection").addEventListener("click",() => {
+  if (!current) return;
+  const suggestion = $("correctionText").value.trim();
+  if (!suggestion) {
+    alert("請先填寫校訂建議 · Enter a correction");
+    return;
+  }
+  const n = getNumber(current);
+  const url = new URL(ISSUES_URL);
+  url.searchParams.set(
+    "title","1879 Psalter: Correction to Psalm "+n
+  );
+  url.searchParams.set(
+    "body",
+    "Edition: 1879 Psalter\nPsalm: "+n+
+    "\nViewed original PDF page: "+absolutePage()+
+    "\n\nSuggested correction:\n"+suggestion+
+    "\n\nPlease verify against the scan."
+  );
+  window.open(url.toString(),"_blank","noopener");
 });
 
-goPage.addEventListener("click", () => {
-  setPage(pdfPage.value);
-});
-
-pdfPage.addEventListener("keydown", e => {
-  if (e.key === "Enter") setPage(pdfPage.value);
-});
-
-document.getElementById("submitCorrection")
-  .addEventListener("click", () => {
-    if (!current) {
-      alert("Please select a Psalm first.");
-      return;
-    }
-
-    const suggestion = document
-      .getElementById("correctionText")
-      .value.trim();
-
-    if (!suggestion) {
-      alert("請先填寫校訂建議 · Enter a correction.");
-      return;
-    }
-
-    const number = getNumber(current);
-
-    const issueTitle =
-      "1879 Psalter: Correction to Psalm " + number;
-
-    const issueBody =
-      "Edition: 1879 Psalter\n" +
-      "Psalm: " + number + "\n" +
-      "Scan batch: " + (currentBatch + 1) + "\n" +
-      "Original PDF page: " + absolutePdfPage() + "\n" +
-      "Status: Unverified OCR\n\n" +
-      "Suggested correction:\n" +
-      suggestion + "\n\n" +
-      "Please verify against the original scan.";
-
-    const url = new URL(ISSUES_URL);
-    url.searchParams.set("title", issueTitle);
-    url.searchParams.set("body", issueBody);
-
-    window.open(url.toString(), "_blank", "noopener");
-  });
-
-// Initialize both the OCR reader and the facsimile reader.
+// Initialize the readers.
+loadBatch(0,6);
 loadLibrary();
-changeBatch(0);
 </script>
-
 </body>
 </html>

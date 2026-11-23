@@ -430,6 +430,7 @@ let editorial = {supplements:[],incompletePsalms:[]};
 let published = new Map();
 let dataWarnings = [];
 let manifestLoaded = false;
+let unifiedOcrPath = null;
 let current = null;
 let batchIndex = 0;
 let localPage = 6;
@@ -611,6 +612,7 @@ async function loadManifest() {
     throw new Error("Manifest scan ranges must cover pages 1–132");
   }
   batches = validated;
+  unifiedOcrPath = typeof manifest.mergedOcr === "string" ? manifest.mergedOcr : null;
   manifestLoaded = true;
 }
 
@@ -687,18 +689,21 @@ function getText(p) {
 function describeSources(p) {
   const lines = [];
   if (p.segments.length) {
-    lines.push("OCR 來源 · OCR sources: " + p.segments.map(x =>
-      "PDF " + x.start + "–" + x.end).join("; "));
+    lines.push(p.segments.some(x=>x.unified)
+      ? "完整合併 OCR 初稿（未校訂）；七份 PDF 繼續用作原始掃描 · Unified merged OCR; seven PDF scan volumes"
+      : "OCR 來源 · OCR sources: " + p.segments.map(x => "PDF " + x.start + "–" + x.end).join("; "));
   } else {
     lines.push("原書有此篇，現有 OCR 無正文 · Original present; OCR missing.");
   }
   if (p.psalmNumber === 43) {
-    lines.push("第43篇於第41張掃描頁續篇；目前 OCR 不完整 · " +
-      "Psalm 43 continues on scan page 41; OCR is incomplete.");
+    lines.push(p.segments.some(x=>x.unified)
+      ? "合併 OCR 已包含第43篇續文，仍待原書核對 · Continuation present in merged OCR, unverified."
+      : "第43篇於第41張掃描頁續篇；目前 OCR 不完整 · Psalm 43 continues on scan page 41; OCR is incomplete.");
   }
   if (p.psalmNumber === 44) {
-    lines.push("第44篇標題見第41張掃描頁左欄，正文自下一頁開始；待補錄 · " +
-      "Title on scan page 41; main text starts on the following page. Awaiting transcription.");
+    lines.push(p.segments.some(x=>x.unified)
+      ? "合併 OCR 已包含第44篇；仍需核對第41–42頁 · Psalm 44 present in merged OCR; scan verification pending."
+      : "第44篇標題見第41張掃描頁左欄，正文自下一頁開始；待補錄 · Title on page 41; main text on page 42.");
   }
   if (p.psalmNumber === 87) {
     lines.push("第87篇末尾五字據第81張掃描頁人工補錄 · " +
@@ -753,22 +758,33 @@ async function showPsalm(number) {
 
 async function loadLibrary() {
   try {
-    const results = await Promise.allSettled(batches.map(async b => {
+    let usingUnified=false;
+    let results=[];
+    if(typeof unifiedOcrPath==="string"){
+      try{
+        const response=await fetch(unifiedOcrPath,{cache:"no-store"});
+        if(!response.ok)throw Error("HTTP "+response.status);
+        const merged=await response.json();
+        if(merged.documentId!=="psalter-1879"||merged.kind!=="merged-ocr"||!Array.isArray(merged.psalms))throw Error("Invalid merged OCR");
+        const ids=merged.psalms.map(p=>Number(p.psalmNumber));
+        if(ids.length!==151||new Set(ids).size!==151||ids.some(n=>!Number.isInteger(n)||n<1||n>151)||merged.psalms.some(p=>typeof p.chineseText!=="string"||!p.chineseText.trim()))throw Error("Merged OCR must contain 151 nonempty distinct Psalms");
+        results=[{status:"fulfilled",value:{batch:{start:1,end:132,unified:true},records:merged.psalms}}];
+        usingUnified=true;
+      }catch(error){dataWarnings.push("Unified OCR unavailable; falling back to seven archival OCR batches: "+error.message)}
+    }
+    if(!usingUnified)results=await Promise.allSettled(batches.map(async b => {
       if (!b.ocr) throw new Error("No OCR path for pages "+b.start+"–"+b.end);
       const response = await fetch(b.ocr,{cache:"no-store"});
       if (!response.ok) throw new Error(b.ocr+" HTTP "+response.status);
       const data = await response.json();
-      if (!data || !Array.isArray(data.psalms)) {
-        throw new Error(b.ocr+" has no psalms array");
-      }
+      if (!data || !Array.isArray(data.psalms)) throw new Error(b.ocr+" has no psalms array");
       return {batch:b,records:data.psalms};
     }));
     const grouped = new Map();
     let batchesRead = 0;
     results.forEach((r,i) => {
       if (r.status !== "fulfilled") {
-        dataWarnings.push("OCR batch " + batches[i].start + "–" +
-          batches[i].end + " failed: " + r.reason.message);
+        dataWarnings.push("OCR source " + (usingUnified?"unified":batches[i].start+"–"+batches[i].end) + " failed: " + r.reason.message);
         return;
       }
       batchesRead++;
@@ -785,10 +801,10 @@ async function loadLibrary() {
           });
         }
         const p = grouped.get(n);
-        if (text) p.segments.push({text,start:batch.start,end:batch.end});
+        if (text) p.segments.push({text,start:batch.start,end:batch.end,unified:Boolean(batch.unified)});
       });
     });
-    if (!batchesRead) throw new Error("No OCR batches could be loaded");
+    if (!batchesRead) throw new Error("No OCR files could be loaded");
     // Preserve all canonical reading slots, including the omitted Psalm 44.
     psalms = Array.from({length:151},(_,i) => {
       const n = i+1;
@@ -809,7 +825,7 @@ async function loadLibrary() {
     });
     await showPsalm(1);
     $("readerStatus").textContent += " · 已載入 " + batchesRead +
-      "/" + batches.length + " 個 OCR 批次" +
+      "/" + (usingUnified?1:batches.length) + (usingUnified?" 份完整 OCR":" 個 OCR 批次") +
       (dataWarnings.length ? " · " + dataWarnings.length + " warning(s)" : "");
     if (dataWarnings.length) console.warn("OCR / editorial warnings:",dataWarnings);
   } catch(error) {

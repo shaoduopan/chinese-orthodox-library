@@ -1,4 +1,3 @@
-
 {
   "documentId": "psalter-1879",
   "title": "聖詠經",
@@ -57,5 +56,6 @@
       "pdf": "scans/11a_BG1879_Beiguan_Psalter_Scan-121-132.pdf",
       "ocr": "data/11a_BG1879_Beiguan_Psalter_Scan-121-132.json"
     }
-  ]
+  ],
+  "mergedOcr": "data/psalter-1879-merged-ocr.json"
 }
